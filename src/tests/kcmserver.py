@@ -215,7 +215,12 @@ def service_request(s):
 
     majver, minver, op = struct.unpack('>BBH', req[:4])
     argbytes = req[4:]
-    code, payload = ophandlers[op](argbytes)
+
+    if op in ophandlers:
+        code, payload = ophandlers[op](argbytes)
+    else:
+        code = -1765328188 # KRB5_FCC_INTERNAL
+        payload = bytearray()
 
     # The KCM response is the code (4 bytes) and the response payload.
     # The Heimdal IPC response is the length of the KCM response (4
