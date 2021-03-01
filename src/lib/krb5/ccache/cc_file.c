@@ -1260,6 +1260,23 @@ fcc_unlock(krb5_context context, krb5_ccache id)
     return 0;
 }
 
+static krb5_error_code KRB5_CALLCONV
+fcc_notification_path(krb5_context context, krb5_ccache id, char **path)
+{
+    fcc_data *data = id->data;
+
+    if (data == NULL || data->filename == NULL) {
+        return KRB5_CC_NOTFOUND;
+    }
+
+    *path = strdup(data->filename);
+    if (*path == NULL) {
+        return ENOMEM;
+    }
+
+    return 0;
+}
+
 /* Translate a system errno value to a Kerberos com_err code. */
 static krb5_error_code
 interpret_errno(krb5_context context, int errnum)
@@ -1340,6 +1357,7 @@ const krb5_cc_ops krb5_fcc_ops = {
     fcc_lock,
     fcc_unlock,
     NULL, /* switch_to */
+    fcc_notification_path,
 };
 
 #if defined(_WIN32)
@@ -1410,4 +1428,5 @@ const krb5_cc_ops krb5_cc_file_ops = {
     fcc_lock,
     fcc_unlock,
     NULL, /* switch_to */
+    NULL, /* notification_path */
 };

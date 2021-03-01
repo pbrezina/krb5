@@ -731,6 +731,23 @@ cleanup:
     return ret;
 }
 
+static krb5_error_code KRB5_CALLCONV
+dcc_notification_path(krb5_context context, krb5_ccache cache, char **path)
+{
+    dcc_data *data = cache->data;
+
+    if (data == NULL || data->residual == NULL) {
+        return KRB5_CC_NOTFOUND;
+    }
+
+    *path = strdup(data->residual);
+    if (*path == NULL) {
+        return ENOMEM;
+    }
+
+    return 0;
+}
+
 const krb5_cc_ops krb5_dcc_ops = {
     0,
     "DIR",
@@ -757,6 +774,7 @@ const krb5_cc_ops krb5_dcc_ops = {
     dcc_lock,
     dcc_unlock,
     dcc_switch_to,
+    dcc_notification_path,
 };
 
 #endif /* not _WIN32 */

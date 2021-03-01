@@ -318,3 +318,14 @@ k5_cc_store_primary_cred(krb5_context context, krb5_ccache cache,
 
     return krb5_cc_store_cred(context, cache, creds);
 }
+
+krb5_error_code KRB5_CALLCONV
+krb5_cc_notification_path(krb5_context context, krb5_ccache cache, char **path)
+{
+    if (cache->ops->notification_path == NULL) {
+        *path = NULL;
+        return KRB5_CC_NOSUPP;
+    }
+
+    return cache->ops->notification_path(context, cache, path);
+}

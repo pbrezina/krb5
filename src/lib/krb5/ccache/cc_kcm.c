@@ -1044,6 +1044,40 @@ kcm_switch_to(krb5_context context, krb5_ccache cache)
     return ret;
 }
 
+static krb5_error_code KRB5_CALLCONV
+kcm_notification_path(krb5_context context, krb5_ccache cache, char **path)
+{
+    struct kcmreq req = EMPTY_KCMREQ;
+    krb5_error_code ret;
+    char *reply_path;
+
+    kcmreq_init(&req, KCM_OP_GET_CACHE_NOTIFICATION_PATH, cache);
+    ret = cache_call(context, cache, &req);
+    if (ret) {
+        ret = KRB5_CC_NOSUPP;
+        goto cleanup;
+    }
+
+    if (req.reply.len < 2) {
+        ret = KRB5_KCM_MALFORMED_REPLY;
+        goto cleanup;
+    }
+
+    reply_path = malloc(req.reply.len);
+    if (reply_path == NULL) {
+        ret = ENOMEM;
+        goto cleanup;
+    }
+
+    memcpy(reply_path, req.reply.ptr, req.reply.len);
+    *path = reply_path;
+    ret = 0;
+
+cleanup:
+    kcmreq_free(&req);
+    return ret;
+}
+
 const krb5_cc_ops krb5_kcm_ops = {
     0,
     "KCM",
@@ -1070,6 +1104,7 @@ const krb5_cc_ops krb5_kcm_ops = {
     kcm_lock,
     kcm_unlock,
     kcm_switch_to,
+    kcm_notification_path, /* notification_path */
 };
 
 #endif /* not _WIN32 */

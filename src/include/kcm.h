@@ -89,7 +89,10 @@ typedef enum kcm_opcode {
     KCM_OP_HAVE_NTLM_CRED,
     KCM_OP_DEL_NTLM_CRED,
     KCM_OP_DO_NTLM_AUTH,
-    KCM_OP_GET_NTLM_USER_LIST
+    KCM_OP_GET_NTLM_USER_LIST,
+
+    /* MIT EXTENSIONS */
+    KCM_OP_GET_CACHE_NOTIFICATION_PATH = 13000, /* (name) -> (path)      */
 } kcm_opcode;
 
 #endif /* KCM_H */

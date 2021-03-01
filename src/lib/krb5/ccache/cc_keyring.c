@@ -1712,6 +1712,7 @@ const krb5_cc_ops krb5_krcc_ops = {
     krcc_lock,
     krcc_unlock,
     krcc_switch_to,
+    NULL, /* notification_path */
 };
 
 #else /* !USE_KEYRING_CCACHE */
@@ -1737,6 +1738,7 @@ const krb5_cc_ops krb5_krcc_ops = {
     NULL,
     NULL,
     NULL,                       /* added after 1.4 release */
+    NULL,
     NULL,
     NULL,
     NULL,
